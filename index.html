@@ -967,47 +967,40 @@
     
     <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"","currentPath":"node","currentPathIsAdmin":false,"isFront":true,"currentLanguage":"fr"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"flexslider":{"optionsets":{"flexslider_carousel_with_min_and_max_ranges":{"animation":"slide","animationSpeed":600,"direction":"horizontal","slideshow":true,"easing":"swing","smoothHeight":false,"reverse":false,"slideshowSpeed":2000,"animationLoop":true,"randomize":false,"startAt":0,"itemWidth":321,"itemMargin":0,"minItems":1,"maxItems":4,"move":0,"directionNav":true,"controlNav":true,"thumbCaptions":false,"thumbCaptionsBoth":false,"keyboard":true,"multipleKeyboard":false,"mousewheel":false,"touch":true,"prevText":"Previous","nextText":"Next","namespace":"flex-","selector":".slides \u003E li","sync":"","asNavFor":"","initDelay":0,"useCSS":true,"video":false,"pausePlay":false,"pauseText":"Pause","playText":"Play","pauseOnAction":true,"pauseOnHover":false,"controlsContainer":".flex-control-nav-container","manualControls":""},"default":{"animation":"fade","animationSpeed":600,"direction":"horizontal","slideshow":true,"easing":"swing","smoothHeight":false,"reverse":false,"slideshowSpeed":4000,"animationLoop":true,"randomize":false,"startAt":0,"itemWidth":0,"itemMargin":0,"minItems":0,"maxItems":0,"move":0,"directionNav":true,"controlNav":true,"thumbCaptions":false,"thumbCaptionsBoth":false,"keyboard":true,"multipleKeyboard":false,"mousewheel":false,"touch":true,"prevText":"Previous","nextText":"Next","namespace":"flex-","selector":".slides \u003E li","sync":"","asNavFor":"","initDelay":0,"useCSS":true,"video":false,"pausePlay":false,"pauseText":"Pause","playText":"Play","pauseOnAction":true,"pauseOnHover":false,"controlsContainer":".flex-control-nav-container","manualControls":""}},"instances":{"flexslider-2":"flexslider_carousel_with_min_and_max_ranges","flexslider-1":"default"}},"ajaxTrustedUrl":{"\/search\/node":true},"user":{"uid":0,"permissionsHash":"6706b4ee7e5d14c1d3d3df4e728d2dd087693a84b3024360ba8402c8f3b76fab"}}</script>
 <script src="/sites/default/files/js/js_2EzFW6Q0NMGsKJ5k87-zrNScPU7WUBUNwDkJ5Lr36lE.js"></script>
-
 <script>
+  // استخدم CORS Anywhere Proxy
+  const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+
   // إضافة مستمع أحداث لجميع الروابط
   document.addEventListener('DOMContentLoaded', function() {
-    // التعامل مع جميع الروابط داخل الصفحة
     document.querySelectorAll('a').forEach(function(link) {
       link.addEventListener('click', function(event) {
         event.preventDefault(); // منع تحميل الصفحة التقليدي
-        
+
         var url = this.getAttribute('href'); // الحصول على الرابط الكامل
 
         // تحديد الرابط من حيث هو مطلق أو نسبي
         var isAbsolute = url.startsWith('http://iscae.mr') || url.startsWith('https://iscae.mr');
         
         if (isAbsolute) {
-          // إذا كان الرابط مطلقًا، يتم استخدام الرابط الكامل مباشرة
-          var path = url.replace('http://iscae.mr', '').replace('https://iscae.mr', ''); // إزالة النطاق من الرابط
+          // إذا كان الرابط مطلقًا، نستخدم الرابط الكامل
+          var path = url.replace('http://iscae.mr', '').replace('https://iscae.mr', ''); // إزالة النطاق
           window.history.pushState({}, '', path); // تغيير الرابط في شريط العنوان
-          fetchContent('https://iscae.mr' + path); // جلب المحتوى من النطاق المطلوب
+          fetchContent(corsProxy + url); // جلب المحتوى باستخدام CORS Anywhere
         } else {
           // إذا كان الرابط نسبيًا
           window.history.pushState({}, '', url); // تغيير الرابط في شريط العنوان
-          fetchContent('https://iscae.mr' + url); // جلب المحتوى من النطاق المطلوب
+          fetchContent(corsProxy + 'https://iscae.mr' + url); // جلب المحتوى
         }
       });
     });
   });
 
-  // التعامل مع التصفح الخلفي أو الأمامي
-  window.addEventListener('popstate', function(event) {
-    // عند العودة إلى التاريخ السابق أو التنقل للأمام، إعادة تحميل المحتوى بناءً على URL الحالي
-    var path = window.location.pathname;
-    fetchContent('https://iscae.mr' + path);
-  });
-
-  // دالة لتحميل المحتوى بناءً على المسار
-  function fetchContent(path) {
-    fetch(path)
+  // دالة لتحميل المحتوى من URL
+  function fetchContent(url) {
+    fetch(url)
       .then(response => response.text())
       .then(html => {
-        // تحديث المحتوى داخل الصفحة
         document.getElementById('content-container').innerHTML = html;
       })
       .catch(error => {
@@ -1015,12 +1008,17 @@
       });
   }
 
+  // التعامل مع التصفح الخلفي أو الأمامي
+  window.addEventListener('popstate', function(event) {
+    var path = window.location.pathname;
+    fetchContent(corsProxy + 'https://iscae.mr' + path);
+  });
+
   // تحميل المحتوى عند فتح الصفحة لأول مرة
   window.onload = function() {
-    fetchContent('https://iscae.mr' + window.location.pathname); // تحميل المحتوى بناءً على المسار الحالي
+    fetchContent(corsProxy + 'https://iscae.mr' + window.location.pathname);
   };
 </script>
-
 
   </body>
 </html>
